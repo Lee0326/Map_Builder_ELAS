@@ -13,15 +13,19 @@ find_package(catkin REQUIRED
 
 find_package(OpenCV 3.3.1 REQUIRED)
 
-catkin_package(
-    CATKIN_DEPENDS
-    geometry_msgs)
+catkin_package()
 
 include_directories(
     include
     ${catkin_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
 )
+
+include_directories("/usr/include/eigen3/")
+
+find_package( PCL REQUIRED COMPONENT common io )
+include_directories( ${PCL_INCLUDE_DIRS} )
+add_definitions( ${PCL_DEFINITIONS} )
 
 add_executable(${PROJECT_NAME}_node 
     nodes/sineva_stereo_node.cpp
@@ -36,6 +40,7 @@ add_executable(${PROJECT_NAME}_node
 target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES}
     ${OpenCV_LIBS}
+    ${PCL_LIBRARIES}
 )
 
 

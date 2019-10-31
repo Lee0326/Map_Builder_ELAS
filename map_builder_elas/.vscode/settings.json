@@ -1,10 +1,11 @@
 {
     "files.associations": {
         "iostream": "cpp",
-        "ostream": "cpp",
+        "core": "cpp",
         "cctype": "cpp",
         "clocale": "cpp",
         "cmath": "cpp",
+        "csignal": "cpp",
         "cstdarg": "cpp",
         "cstddef": "cpp",
         "cstdio": "cpp",
@@ -40,6 +41,7 @@
         "limits": "cpp",
         "memory": "cpp",
         "new": "cpp",
+        "ostream": "cpp",
         "numeric": "cpp",
         "sstream": "cpp",
         "stdexcept": "cpp",
@@ -49,7 +51,6 @@
         "cinttypes": "cpp",
         "utility": "cpp",
         "typeindex": "cpp",
-        "typeinfo": "cpp",
-        "random": "cpp"
+        "typeinfo": "cpp"
     }
 }
