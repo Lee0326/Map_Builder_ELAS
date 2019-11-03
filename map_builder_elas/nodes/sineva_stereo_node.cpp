@@ -1,6 +1,5 @@
 #include <iostream>
 #include <sstream>
-
 #include <ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
 #include <message_filters/subscriber.h>
@@ -69,7 +68,10 @@ void ImageProcessor::processStereo(const sensor_msgs::ImageConstPtr& msgLeft, co
 {
     // convert the ros image message to cv::Mat using cvshared
     cv::Mat leftImage, rightImage;
+    ofstream f;
+    std::string filename = "tum_mynt.txt";
     double x,y,z,qx,qy,qz,qw;
+    double timestamp;
     try
     {
         leftImage = cv_bridge::toCvShare(msgLeft)->image;
@@ -81,6 +83,7 @@ void ImageProcessor::processStereo(const sensor_msgs::ImageConstPtr& msgLeft, co
         qy = msgPose->pose.pose.orientation.y;
         qz = msgPose->pose.pose.orientation.z;
         qw = msgPose->pose.pose.orientation.w;
+        timestamp = msgPose->header.stamp.toSec();
     }
     catch (cv_bridge::Exception& e)
     {
@@ -93,12 +96,17 @@ void ImageProcessor::processStereo(const sensor_msgs::ImageConstPtr& msgLeft, co
         cv::cvtColor(leftImage, leftImage, CV_BGR2GRAY);
         cv::cvtColor(rightImage, rightImage, CV_BGR2GRAY);
     }
-
+    // Save the data to tum file
+    // f.open(filename,ios::app);
+    // f << std::fixed;
+    // f << setprecision(6) << timestamp << " " << setprecision(9) << x << " "
+    // << y << " " << z << " " << qx << " " << qy << " "<< qz << " " << qw << std::endl; 
+    // f.close();
     Eigen::Quaterniond q( qw, qx, qy, qz);
     Eigen::Isometry3d T(q);
     T.pretranslate( Eigen::Vector3d(x,y,z)); 
     StereoMatch stereoMatch;
-
+    std::cout << leftImage.rows << rightImage.cols << std::endl; 
     cv::Mat disparityImage = stereoMatch.run(leftImage, rightImage, T, baseline, fx);
     sensor_msgs::ImagePtr depthMsg = cv_bridge::CvImage(std_msgs::Header(), "mono16", disparityImage).toImageMsg();
     k_depth_pub.publish(depthMsg);
