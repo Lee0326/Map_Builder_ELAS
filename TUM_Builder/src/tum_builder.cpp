@@ -5,6 +5,7 @@
 #include "std_msgs/String.h"
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/PointStamped.h>
+#include <geometry_msgs/PoseStamped.h>
 using namespace std;
 
 void poseCallback(const geometry_msgs::PoseWithCovarianceStampedConstPtr& msgPose)
@@ -21,6 +22,29 @@ void poseCallback(const geometry_msgs::PoseWithCovarianceStampedConstPtr& msgPos
     qy = msgPose->pose.pose.orientation.y;
     qz = msgPose->pose.pose.orientation.z;
     qw = msgPose->pose.pose.orientation.w;
+    timestamp = msgPose->header.stamp.toSec();
+
+    ofstream f;
+    f.open(filename,ios::app);
+    f << std::fixed;
+    f << setprecision(6) << timestamp << " " << setprecision(9) << x << " "
+    << y << " " << z << " " << qx << " " << qy << " "<< qz << " " << qw << std::endl; 
+    f.close();
+}
+void poseStampedCallback(const geometry_msgs::PoseStampedConstPtr& msgPose)
+{
+    ROS_INFO("I received pose data !!");
+    std::string filename = "maplab_loc_trajectory_TMI.txt";
+    double x,y,z,qx,qy,qz,qw;
+    double timestamp;
+
+    x = msgPose->pose.position.x;
+    y = msgPose->pose.position.y;
+    z = msgPose->pose.position.z;
+    qx = msgPose->pose.orientation.x;
+    qy = msgPose->pose.orientation.y;
+    qz = msgPose->pose.orientation.z;
+    qw = msgPose->pose.orientation.w;
     timestamp = msgPose->header.stamp.toSec();
 
     ofstream f;
@@ -61,9 +85,11 @@ int main(int argc, char **argv)
  
    std::string poseTopic = "/rovio/pose_with_covariance_stamped";
    std::string positionTopic = "/leica/position";
+   std::string poseStampedTopic = "/maplab_rovio/T_M_I";
    
    ros::Subscriber pose_sub = n.subscribe(poseTopic, 1, poseCallback);
    ros::Subscriber point_sub = n.subscribe(positionTopic, 1, positionCallback);
+   ros::Subscriber pointStamp_sub = n.subscribe(poseStampedTopic, 1, poseStampedCallback);
 
  
    ros::spin();
